@@ -1,10 +1,10 @@
 function startGame() {
-    let petGamerButton = document.getElementById('pet-button')
-    petGamerButton.addEventListener('click', selectPetGamer)
+    let petPlayerButton = document.getElementById('pet-button')
+    petPlayerButton.addEventListener('click', selectPetPlayer)
     
 }
 
-function selectPetGamer(){
+function selectPetPlayer(){
     let hipodogeRadio = document.getElementById('hipodoge')
     let capipepoRadio = document.getElementById('capipepo')
     let ratigueyaRadio = document.getElementById('ratigueya')
@@ -20,11 +20,29 @@ function selectPetGamer(){
 
 
     if (selectedPet) {
-        alert(`seleccionaste tu mascota ${selectedPet}`)
+        document.getElementById('pet-player-name').innerHTML = selectedPet
+        document.getElementById('pet-enemy-name').innerHTML = selectPetEnemy()
     }
     else {
-        alert('No haz seleccionado tu mascota')
+        alert('Por favor selecciona una mascota')
     }
+}
+
+function selectPetEnemy(){
+    let pet = ramdomPet(1,3)
+    if (pet == 1){
+        return "hipodoge"
+    }
+    if (pet == 2){
+        return "cepipepo"
+    } 
+    if (pet == 3) {
+        return "ratigueya"
+    }
+}
+
+function ramdomPet(min, max){
+    return Math.floor(Math.random() * (max-min + 1) + min)
 }
 
 window.addEventListener('load', startGame)
