@@ -8,7 +8,7 @@
     <body>
         <h1>NIKOPON 🔥 💧 🪨</h1>
 
-        <section id="pet-choice">
+        <section id="pet-choice-section">
             <h2>Choose your pet:</h2>
             <label for="hipodoge">Hipodoge</label>
             <input type="radio" name="pet" id="hipodoge" />
@@ -22,23 +22,23 @@
             <button id="pet-button">Select</button>
         </section>
 
-        <section id="atack-choid">
+        <section id="atack-choice-section">
             <h2>Choose your attack:</h2>
 
-            <p>Your <strong><span id="pet-player-name"></span></strong> pet has <span>3</span> lives</p>
-            <p>Your enemy <strong><span id="pet-enemy-name"></span></strong> pet has <span>3</span> lives</p>
+            <p>Your <strong><span id="pet-player-name"></span></strong> pet has <span id="player-lives">3</span> lives</p>
+            <p>Your enemy <strong><span id="pet-enemy-name"></span></strong> pet has <span id="enemy-lives">3</span> lives</p>
 
             <p>
-                <button id="fire-button">Fire 🔥</button>
-                <button id="water-button">Water 💧</button>
-                <button id="land-button">Land 🪨</button>
+                <button id="fire-button" disabled>Fire 🔥</button>
+                <button id="water-button" disabled>Water 💧</button>
+                <button id="land-button" disabled>Land 🪨</button>
             </p>
         </section>
 
-        <section id="messages">
+        <section id="messages-section">
         </section>
 
-        <section id="reset-game">
+        <section id="reset-game-section">
             <button id="reset-game-button">Reset Game</button>
         </section>
     </body>
