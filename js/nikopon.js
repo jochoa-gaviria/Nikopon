@@ -4,18 +4,18 @@ let playerLives = 3
 let enemyLives = 3
 
 function startGame() {
-    document.getElementById('atack-choice-section').style.display = 'none'
+    document.getElementById('attack-choice-section').style.display = 'none'
     document.getElementById('reset-game-section').style.display = 'none'
 
-    let petPlayerButton = document.getElementById('pet-button')
-    petPlayerButton.addEventListener('click', selectPetPlayer)
+    let singerPlayerButton = document.getElementById('select-singer-button')
+    singerPlayerButton.addEventListener('click', selectSingerPlayer)
 
-    let fireButton = document.getElementById('fire-button')
-    fireButton.addEventListener('click', fireAttack)
-    let waterButton = document.getElementById('water-button')
-    waterButton.addEventListener('click', waterAttack)
-    let landButton = document.getElementById('land-button')
-    landButton.addEventListener('click', landAttack)
+    let singButton = document.getElementById('sing-button')
+    singButton.addEventListener('click', singAttack)
+    let singDanceButton = document.getElementById('sing-dance-button')
+    singDanceButton.addEventListener('click', singDanceAttack)
+    let danceButton = document.getElementById('dance-button')
+    danceButton.addEventListener('click', danceAttack)
     let resetButton = document.getElementById('reset-game-button')
     resetButton.addEventListener('click', resetGame)
 
@@ -23,60 +23,60 @@ function startGame() {
     document.getElementById('enemy-lives').innerHTML = enemyLives
 }
 
-function selectPetPlayer(){
-    let hipodogeRadio = document.getElementById('hipodoge')
-    let capipepoRadio = document.getElementById('capipepo')
-    let ratigueyaRadio = document.getElementById('ratigueya')
+function selectSingerPlayer(){
+    let theWeekndRadio = document.getElementById('theWeeknd')
+    let michaelJacksonRadio = document.getElementById('michaelJackson')
+    let brunoMarsRadio = document.getElementById('brunoMars')
 
-    var selectedPet
-    if (hipodogeRadio.checked){
-        selectedPet = "hipodoge"
-    } else if (capipepoRadio.checked){
-        selectedPet = "cepipepo"
-    } else if (ratigueyaRadio.checked) {
-        selectedPet = "ratigueya"
+    var selectedSinger
+    if (theWeekndRadio.checked){
+        selectedSinger = "The Weeknd"
+    } else if (michaelJacksonRadio.checked){
+        selectedSinger = "Michael Jackson"
+    } else if (brunoMarsRadio.checked) {
+        selectedSinger = "Bruno Mars"
     }
 
 
-    if (selectedPet) {
-        document.getElementById('pet-player-name').innerHTML = selectedPet
-        document.getElementById('pet-enemy-name').innerHTML = selectPetEnemy()
-        document.getElementById('atack-choice-section').style.display = 'block'
-        document.getElementById('pet-choice-section').style.display = 'none'
+    if (selectedSinger) {
+        document.getElementById('singer-player-name').innerHTML = selectedSinger
+        document.getElementById('singer-enemy-name').innerHTML = selectSingerEnemy()
+        document.getElementById('attack-choice-section').style.display = 'flex'
+        document.getElementById('singer-choice-section').style.display = 'none'
         enabledButtonsAttack()
     }
     else {
-        alert('Por favor selecciona una mascota')
+        alert('Por favor selecciona un cantante')
     }
 }
 
-function selectPetEnemy(){
+function selectSingerEnemy(){
     let pet = ramdom(1,3)
     switch(pet){
         case 1:{
-            return "hipodoge"
+            return "The Weeknd"
         }
         case 2:{
-            return "capipepo"
+            return "Michael Jackson"
         }
         case 3:{
-            return "ratigueya"
+            return "Bruno Mars"
         }
     }
 }
 
-function fireAttack(){
-    playerAttack = "FIRE"
+function singAttack(){
+    playerAttack = "SING"
     selectEnemyAttack()
 }
 
-function waterAttack(){
-    playerAttack = "WATER"
+function singDanceAttack(){
+    playerAttack = "SING-DANCE"
     selectEnemyAttack()
 }
 
-function landAttack(){
-    playerAttack = "LAND"
+function danceAttack(){
+    playerAttack = "DANCE"
     selectEnemyAttack()
 }
 
@@ -84,15 +84,15 @@ function selectEnemyAttack(){
     let attack = ramdom(1,3)
     switch(attack){
         case 1:{
-            enemyAttack = "FIRE"
+            enemyAttack = "SING"
             break
         }
         case 2:{
-            enemyAttack = "WATER"
+            enemyAttack = "SING-DANCE"
             break
         }
         case 3:{
-            enemyAttack = "LAND"
+            enemyAttack = "DANCE"
             break
         }
     }
@@ -102,15 +102,21 @@ function selectEnemyAttack(){
 }
 
 function createMessage(result){
-    let paragraph = document.createElement('p')
-    paragraph.innerHTML = `Your pet attacked with ${playerAttack}, your enemy pet attacked with ${enemyAttack} - ${result}`
-    document.getElementById('messages-section').appendChild(paragraph)
+
+    let newEnemyAttack = document.createElement('p');
+    let newPlayerAttack = document.createElement('p');
+
+    newEnemyAttack.innerHTML = enemyAttack;
+    newPlayerAttack.innerHTML = playerAttack;
+
+    document.getElementById('enemy-attack').appendChild(newEnemyAttack);
+    document.getElementById('player-attack').appendChild(newPlayerAttack);
+
+    document.getElementById('result').innerHTML = result;
 }
 
 function createFinishMessage(finalResult){
-    let paragraph = document.createElement('p')
-    paragraph.innerHTML = finalResult
-    document.getElementById('messages-section').appendChild(paragraph)
+    document.getElementById('result').innerHTML = finalResult;
 }
 
 function ramdom(min, max){
@@ -124,17 +130,17 @@ function figth(){
     if (enemyAttack == playerAttack) {
         return "You are tie"
     }
-    if (playerAttack == "FIRE" && enemyAttack == "LAND") {
+    if (playerAttack == "SING" && enemyAttack == "DANCE") {
         enemyLives --
         spanEnemyLives.innerHTML = enemyLives
         return "You Win!! 🎉" 
     }
-    if (playerAttack == "WATER" && enemyAttack == "FIRE") {
+    if (playerAttack == "SING-DANCE" && enemyAttack == "SING") {
         enemyLives --
         spanEnemyLives.innerHTML = enemyLives
         return "You Win!! 🎉"
     } 
-    if (playerAttack == "LAND" && enemyAttack == "WATER") {
+    if (playerAttack == "SING-DANCE" && enemyAttack == "DANCE") {
         enemyLives --
         spanEnemyLives.innerHTML = enemyLives
         return "You Win!! 🎉"
@@ -146,26 +152,26 @@ function figth(){
 
 function checkLives(){
     if (enemyLives == 0){
-        createFinishMessage("Congratulations!!! you've won!! 🎉🎉🎉");
+        createFinishMessage("🎉Congratulations!! you've won!!🎉");
         disableButtonsAttack();
         document.getElementById('reset-game-section').style.display = 'block';
     } else if (playerLives == 0){
-        createFinishMessage("Bad news!!! you've lost!! 💀💀💀");
+        createFinishMessage("💀Bad news!! you've lost!!💀");
         disableButtonsAttack();
         document.getElementById('reset-game-section').style.display = 'block';
     }
 }
 
 function disableButtonsAttack(){
-    document.getElementById('fire-button').disabled = true;
-    document.getElementById('water-button').disabled = true;
-    document.getElementById('land-button').disabled = true;
+    document.getElementById('sing-button').disabled = true;
+    document.getElementById('sing-dance-button').disabled = true;
+    document.getElementById('dance-button').disabled = true;
 }
 
 function enabledButtonsAttack(){
-    document.getElementById('fire-button').disabled = false;
-    document.getElementById('water-button').disabled = false;
-    document.getElementById('land-button').disabled = false;
+    document.getElementById('sing-button').disabled = false;
+    document.getElementById('sing-dance-button').disabled = false;
+    document.getElementById('dance-button').disabled = false;
 }
 
 function resetGame(){

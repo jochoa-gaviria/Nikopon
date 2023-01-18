@@ -2,44 +2,69 @@
 <html>
     <head>
         <meta charset="utf-8" ></meta>
-        <title>NIKOPON!</title>
+        <title>🎤 DAWN FM  🎧</title>
         <script src="./js/nikopon.js"></script>
+        <link rel="stylesheet" href="./css/styles.css">
     </head>
     <body>
-        <h1>NIKOPON 🔥 💧 🪨</h1>
 
-        <section id="pet-choice-section">
-            <h2>Choose your pet:</h2>
-            <label for="hipodoge">Hipodoge</label>
-            <input type="radio" name="pet" id="hipodoge" />
+        <section id="singer-choice-section">
+            <h1 class="title">🎤 DAWN FM  🎧</h1>
+            <h2 class="subtitle">Choose your singer:</h2>
+
+            <div class="cards">
+                <input type="radio" name="singer" id="theWeeknd" />
+                <label class="singer-card" for="theWeeknd">
+                    <p>The Weeknd</p>
+                    <img src="./assets/the-weeknd.png" alt="theWeeknd">
+                </label>
+                
+                <input type="radio" name="singer" id="michaelJackson">
+                <label class="singer-card" for="michaelJackson">
+                    <p>Michael Jackson</p>
+                    <img src="./assets/michael-jackson.png" alt="michaelJackson">
+                </label>
+
+                <input type="radio" name="singer" id="brunoMars">
+                <label class="singer-card" for="brunoMars">
+                    <p>Bruno Mars</p>
+                    <img src="./assets/bruno-mars.png" alt="brunoMars">
+                </label>
+            </div>
+            <button id="select-singer-button">HABILITIES</button>
+        </section>
+
+        <section id="attack-choice-section">
+            <h1 class="title">🎤 DAWN FM  🎧</h1>
             
-            <label for="capipepo">Capipepo</label>
-            <input type="radio" name="pet" id="capipepo">
+            <h2 class="subtitle">Choose your attack:</h2>
 
-            <label for="ratigueya">Ratigueya</label>
-            <input type="radio" name="pet" id="ratigueya">
-            <br>
-            <button id="pet-button">Select</button>
-        </section>
+            <div class="attacks"> 
+                <button id="sing-button" class="attack-button" disabled>Sing 🎤</button>
+                <button id="dance-button" class="attack-button" disabled>Dance 🕺🏾</button>
+                <button id="sing-dance-button" class="attack-button" disabled>Sing and dance 🎤 🕺🏾</button>
+            </div>
 
-        <section id="atack-choice-section">
-            <h2>Choose your attack:</h2>
+            <div id="messages">
+                <p id="result">Good luck!</p>
+                <section id="reset-game-section">
+                    <button id="reset-game-button">Reset Game</button>
+                </section>
+            </div>
 
-            <p>Your <strong><span id="pet-player-name"></span></strong> pet has <span id="player-lives">3</span> lives</p>
-            <p>Your enemy <strong><span id="pet-enemy-name"></span></strong> pet has <span id="enemy-lives">3</span> lives</p>
+            <div class="attacks">
+                <div class="player-attacks">
+                    <p id="player-lives">3</p>
+                    <strong><p id="singer-player-name"></p></strong>
+                    <div id="player-attack"></div>
+                </div>
+                <div class="enemy-attacks">
+                    <p id="enemy-lives">3</p>
+                    <strong><p id="singer-enemy-name"></p></strong>
+                    <div id="enemy-attack"></div>
+                </div>
+            </div>
 
-            <p>
-                <button id="fire-button" disabled>Fire 🔥</button>
-                <button id="water-button" disabled>Water 💧</button>
-                <button id="land-button" disabled>Land 🪨</button>
-            </p>
-        </section>
-
-        <section id="messages-section">
-        </section>
-
-        <section id="reset-game-section">
-            <button id="reset-game-button">Reset Game</button>
         </section>
     </body>
 </html>
