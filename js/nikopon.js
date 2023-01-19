@@ -1,181 +1,254 @@
-let playerAttack
-let enemyAttack
-let playerLives = 3
-let enemyLives = 3
+//Classes
+class Singer {
+    constructor(name, fullName, pathPhoto, lives) {
+        this.name = name;
+        this.fullName = fullName
+        this.pathPhoto = pathPhoto;
+        this.lives = lives;
+        this.attacks = []
+    }
+}
+
+//Sections
+const attackChoiceSection = document.getElementById('attack-choice-section');
+const singerChoiceSection = document.getElementById('singer-choice-section');
+const resetGameSection = document.getElementById('reset-game-section');
+
+//Buttons
+const singButton = document.getElementById('sing-button');
+const danceButton = document.getElementById('dance-button');
+const singDanceButton = document.getElementById('sing-dance-button');
+const resetButton = document.getElementById('reset-game-button');
+const singerPlayerButton = document.getElementById('select-singer-button');
+
+///Paragraphs
+const playerLivesParagraph = document.getElementById('player-lives');
+const enemyLivesParagraph = document.getElementById('enemy-lives');
+const resultParagraph = document.getElementById('result');
+const singerPlayerNameParagraph = document.getElementById('singer-player-name');
+const singerEnemyNameParagraph = document.getElementById('singer-enemy-name');
+
+//Divs
+const enemyAttackDivision = document.getElementById('enemy-attack');
+const playerAttackDivision = document.getElementById('player-attack');
+const cardsDivision = document.getElementById('cards-container')
+
+//Radios
+let theWeekndRadio;
+let michaelJacksonRadio;
+let brunoMarsRadio;
+
+//Functionals
+let singers = [];
+let playerAttack;
+let enemyAttack;
+let singerOptions;
+let playerLives = 3;
+let enemyLives = 3;
+var selectedPlayerSinger;
+var selectedEnemySinger;
+
+//Singers Objects
+let theWeeknd = new Singer('theWeeknd', 'The Weeknd', './assets/the-weeknd.png', 3);
+let michaelJackson = new Singer('michaelJackson', 'Michael Jackson', './assets/michael-jackson.png', 3);
+let brunoMars = new Singer('brunoMars', 'Bruno Mars', './assets/bruno-mars.png', 3);
+
+theWeeknd.attacks.push( 
+    { name: 'SING 🎤', id: 'sing-button', level: 5 },
+    { name: 'COMPOSE 💡🗓', id: 'compose-button', level: 4 },
+    { name: 'DANCE 🕺🏾', id: 'dance-button', level: 1},
+    { name: 'SING 🎤 AND DANCE 🕺🏾', id: 'sing-dance-button', level: 3 },
+    { name: 'NEW ALBUM 💽', id: 'new-album-button', level: 4 }
+)
+
+michaelJackson.attacks.push( 
+    { name: 'SING 🎤', id: 'sing-button' , level: 5},
+    { name: 'COMPOSE 💡🗓', id: 'compose-button', level: 5 },
+    { name: 'DANCE 🕺🏾', id: 'dance-button', level: 5},
+    { name: 'SING 🎤 AND DANCE 🕺🏾', id: 'sing-dance-button', level: 5 },
+    { name: 'CONCERT 📆🔊', id: 'concert-button', level: 5 }
+)
+
+brunoMars.attacks.push( 
+    { name: 'SING 🎤', id: 'sing-button', level: 4 },
+    { name: 'NEW ALBUM 💽', id: 'new-album-button', level: 3 },
+    { name: 'DANCE 🕺🏾', id: 'dance-button', level: 5},
+    { name: 'SING 🎤 AND DANCE 🕺🏾', id: 'sing-dance-button', level: 4 },
+    { name: 'CONCERT 📆🔊', id: 'concert-button', level: 3 }
+)
+
+singers.push(theWeeknd, michaelJackson, brunoMars);
+
 
 function startGame() {
-    document.getElementById('attack-choice-section').style.display = 'none'
-    document.getElementById('reset-game-section').style.display = 'none'
+    attackChoiceSection.style.display = 'none';
+    resetGameSection.style.display = 'none';
 
-    let singerPlayerButton = document.getElementById('select-singer-button')
-    singerPlayerButton.addEventListener('click', selectSingerPlayer)
+    singers.forEach(singer => {
+        singerOptions = `
+            <input type="radio" name="singer" id="${singer.name}" />
+            <label class="singer-card" for="${singer.name}">
+                <p>${singer.fullName}</p>
+                <img src="${singer.pathPhoto}" alt="${singer.name}">
+            </label>
+        `;
+        cardsDivision.innerHTML += singerOptions;
+    });
 
-    let singButton = document.getElementById('sing-button')
-    singButton.addEventListener('click', singAttack)
-    let singDanceButton = document.getElementById('sing-dance-button')
-    singDanceButton.addEventListener('click', singDanceAttack)
-    let danceButton = document.getElementById('dance-button')
-    danceButton.addEventListener('click', danceAttack)
-    let resetButton = document.getElementById('reset-game-button')
-    resetButton.addEventListener('click', resetGame)
+    theWeekndRadio = document.getElementById('theWeeknd');
+    michaelJacksonRadio = document.getElementById('michaelJackson');
+    brunoMarsRadio = document.getElementById('brunoMars');
 
-    document.getElementById('player-lives').innerHTML = playerLives
-    document.getElementById('enemy-lives').innerHTML = enemyLives
+    playerLivesParagraph.innerHTML = playerLives;
+    enemyLivesParagraph.innerHTML = enemyLives;
+
+    singerPlayerButton.addEventListener('click', selectSingerPlayer);
+    singButton.addEventListener('click', singAttack);
+    singDanceButton.addEventListener('click', singDanceAttack);
+    danceButton.addEventListener('click', danceAttack);
+    resetButton.addEventListener('click', resetGame);
 }
 
 function selectSingerPlayer(){
-    let theWeekndRadio = document.getElementById('theWeeknd')
-    let michaelJacksonRadio = document.getElementById('michaelJackson')
-    let brunoMarsRadio = document.getElementById('brunoMars')
-
-    var selectedSinger
     if (theWeekndRadio.checked){
-        selectedSinger = "The Weeknd"
+        selectedPlayerSinger = theWeeknd;
     } else if (michaelJacksonRadio.checked){
-        selectedSinger = "Michael Jackson"
+        selectedPlayerSinger = michaelJackson;
     } else if (brunoMarsRadio.checked) {
-        selectedSinger = "Bruno Mars"
+        selectedPlayerSinger = brunoMars;
     }
 
-
-    if (selectedSinger) {
-        document.getElementById('singer-player-name').innerHTML = selectedSinger
-        document.getElementById('singer-enemy-name').innerHTML = selectSingerEnemy()
-        document.getElementById('attack-choice-section').style.display = 'flex'
-        document.getElementById('singer-choice-section').style.display = 'none'
-        enabledButtonsAttack()
+    if (selectedPlayerSinger) {
+        selectSingerEnemy();
+        singerPlayerNameParagraph.innerHTML = selectedPlayerSinger.fullName;
+        singerEnemyNameParagraph.innerHTML = selectedEnemySinger.fullName;
+        attackChoiceSection.style.display = 'flex';
+        singerChoiceSection.style.display = 'none';
+        disableButtonsAttack(false);
     }
     else {
-        alert('Por favor selecciona un cantante')
+        alert('You must select a singer');
     }
 }
 
 function selectSingerEnemy(){
-    let pet = ramdom(1,3)
-    switch(pet){
+    let selectedSingerEnemyRamdom = ramdom(1,3);
+    switch(selectedSingerEnemyRamdom){
         case 1:{
-            return "The Weeknd"
+            selectedEnemySinger = theWeeknd;
+            return;
         }
         case 2:{
-            return "Michael Jackson"
+            selectedEnemySinger = michaelJackson;
+            return;
         }
         case 3:{
-            return "Bruno Mars"
+            selectedEnemySinger = brunoMars;
+            return;
         }
     }
 }
 
 function singAttack(){
-    playerAttack = "SING"
-    selectEnemyAttack()
+    playerAttack = "SING";
+    selectEnemyAttack();
 }
 
 function singDanceAttack(){
-    playerAttack = "SING-DANCE"
-    selectEnemyAttack()
+    playerAttack = "SING-DANCE";
+    selectEnemyAttack();
 }
 
 function danceAttack(){
-    playerAttack = "DANCE"
-    selectEnemyAttack()
+    playerAttack = "DANCE";
+    selectEnemyAttack();
 }
 
 function selectEnemyAttack(){
     let attack = ramdom(1,3)
     switch(attack){
         case 1:{
-            enemyAttack = "SING"
-            break
+            enemyAttack = "SING";
+            break;
         }
         case 2:{
-            enemyAttack = "SING-DANCE"
-            break
+            enemyAttack = "SING-DANCE";
+            break;
         }
         case 3:{
-            enemyAttack = "DANCE"
-            break
+            enemyAttack = "DANCE";
+            break;
         }
     }
-    let result = figth()
-    createMessage(result)
-    checkLives()
+    let result = figth();
+    createMessage(result);
+    checkLives();
 }
 
 function createMessage(result){
 
     let newEnemyAttack = document.createElement('p');
     let newPlayerAttack = document.createElement('p');
-
     newEnemyAttack.innerHTML = enemyAttack;
     newPlayerAttack.innerHTML = playerAttack;
 
-    document.getElementById('enemy-attack').appendChild(newEnemyAttack);
-    document.getElementById('player-attack').appendChild(newPlayerAttack);
-
-    document.getElementById('result').innerHTML = result;
+    enemyAttackDivision.appendChild(newEnemyAttack);
+    playerAttackDivision.appendChild(newPlayerAttack);
+    resultParagraph.innerHTML = result;
 }
 
 function createFinishMessage(finalResult){
-    document.getElementById('result').innerHTML = finalResult;
+    resultParagraph.innerHTML = finalResult;
 }
 
 function ramdom(min, max){
-    return Math.floor(Math.random() * (max-min + 1) + min)
+    return Math.floor(Math.random() * (max-min + 1) + min);
 }
 
 function figth(){
-    let spanPlayerLives = document.getElementById('player-lives')
-    let spanEnemyLives = document.getElementById('enemy-lives')
-
     if (enemyAttack == playerAttack) {
-        return "You are tie"
+        return "You are tie";
     }
     if (playerAttack == "SING" && enemyAttack == "DANCE") {
-        enemyLives --
-        spanEnemyLives.innerHTML = enemyLives
-        return "You Win!! 🎉" 
+        enemyLives --;
+        enemyLivesParagraph.innerHTML = enemyLives;
+        return "You Win!! 🎉";
     }
     if (playerAttack == "SING-DANCE" && enemyAttack == "SING") {
-        enemyLives --
-        spanEnemyLives.innerHTML = enemyLives
-        return "You Win!! 🎉"
+        enemyLives --;
+        enemyLivesParagraph.innerHTML = enemyLives;
+        return "You Win!! 🎉";
     } 
     if (playerAttack == "SING-DANCE" && enemyAttack == "DANCE") {
-        enemyLives --
-        spanEnemyLives.innerHTML = enemyLives
-        return "You Win!! 🎉"
+        enemyLives --;
+        enemyLivesParagraph.innerHTML = enemyLives;
+        return "You Win!! 🎉";
     }
-    playerLives -- 
-    spanPlayerLives.innerHTML = playerLives
-    return "You Loose!! 💀"
+    playerLives --;
+    playerLivesParagraph.innerHTML = playerLives;
+    return "You Loose!! 💀";
 }
 
 function checkLives(){
     if (enemyLives == 0){
         createFinishMessage("🎉Congratulations!! you've won!!🎉");
-        disableButtonsAttack();
-        document.getElementById('reset-game-section').style.display = 'block';
+        disableButtonsAttack(true);
+        resetGameSection.style.display = 'block';
     } else if (playerLives == 0){
         createFinishMessage("💀Bad news!! you've lost!!💀");
-        disableButtonsAttack();
-        document.getElementById('reset-game-section').style.display = 'block';
+        disableButtonsAttack(true);
+        resetGameSection.style.display = 'block';
     }
 }
 
-function disableButtonsAttack(){
-    document.getElementById('sing-button').disabled = true;
-    document.getElementById('sing-dance-button').disabled = true;
-    document.getElementById('dance-button').disabled = true;
-}
-
-function enabledButtonsAttack(){
-    document.getElementById('sing-button').disabled = false;
-    document.getElementById('sing-dance-button').disabled = false;
-    document.getElementById('dance-button').disabled = false;
+function disableButtonsAttack(isDisabled){
+    singButton.disabled = isDisabled;
+    danceButton.disabled = isDisabled;
+    singDanceButton.disabled = isDisabled;
 }
 
 function resetGame(){
     location.reload();
 }
 
-window.addEventListener('load', startGame)
+window.addEventListener('load', startGame);

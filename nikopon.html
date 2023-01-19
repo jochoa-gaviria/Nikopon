@@ -3,7 +3,6 @@
     <head>
         <meta charset="utf-8" ></meta>
         <title>🎤 DAWN FM  🎧</title>
-        <script src="./js/nikopon.js"></script>
         <link rel="stylesheet" href="./css/styles.css">
     </head>
     <body>
@@ -12,24 +11,7 @@
             <h1 class="title">🎤 DAWN FM  🎧</h1>
             <h2 class="subtitle">Choose your singer:</h2>
 
-            <div class="cards">
-                <input type="radio" name="singer" id="theWeeknd" />
-                <label class="singer-card" for="theWeeknd">
-                    <p>The Weeknd</p>
-                    <img src="./assets/the-weeknd.png" alt="theWeeknd">
-                </label>
-                
-                <input type="radio" name="singer" id="michaelJackson">
-                <label class="singer-card" for="michaelJackson">
-                    <p>Michael Jackson</p>
-                    <img src="./assets/michael-jackson.png" alt="michaelJackson">
-                </label>
-
-                <input type="radio" name="singer" id="brunoMars">
-                <label class="singer-card" for="brunoMars">
-                    <p>Bruno Mars</p>
-                    <img src="./assets/bruno-mars.png" alt="brunoMars">
-                </label>
+            <div id="cards-container" class="cards">
             </div>
             <button id="select-singer-button">HABILITIES</button>
         </section>
@@ -64,7 +46,7 @@
                     <div id="enemy-attack"></div>
                 </div>
             </div>
-
         </section>
+        <script src="./js/nikopon.js"></script>
     </body>
 </html>
