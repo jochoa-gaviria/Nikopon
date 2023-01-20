@@ -15,9 +15,6 @@ const singerChoiceSection = document.getElementById('singer-choice-section');
 const resetGameSection = document.getElementById('reset-game-section');
 
 //Buttons
-const singButton = document.getElementById('sing-button');
-const danceButton = document.getElementById('dance-button');
-const singDanceButton = document.getElementById('sing-dance-button');
 const resetButton = document.getElementById('reset-game-button');
 const singerPlayerButton = document.getElementById('select-singer-button');
 
@@ -31,7 +28,8 @@ const singerEnemyNameParagraph = document.getElementById('singer-enemy-name');
 //Divs
 const enemyAttackDivision = document.getElementById('enemy-attack');
 const playerAttackDivision = document.getElementById('player-attack');
-const cardsDivision = document.getElementById('cards-container')
+const cardsDivision = document.getElementById('cards-container');
+const attacksDivision = document.getElementById('attacks-container');
 
 //Radios
 let theWeekndRadio;
@@ -40,8 +38,11 @@ let brunoMarsRadio;
 
 //Functionals
 let singers = [];
+let currentAttackButtons = [];
 let playerAttack;
+let playerAttacks = [];
 let enemyAttack;
+let enemyAttacks = [];
 let singerOptions;
 let playerLives = 3;
 let enemyLives = 3;
@@ -56,17 +57,17 @@ let brunoMars = new Singer('brunoMars', 'Bruno Mars', './assets/bruno-mars.png',
 theWeeknd.attacks.push( 
     { name: 'SING 🎤', id: 'sing-button', level: 5 },
     { name: 'COMPOSE 💡🗓', id: 'compose-button', level: 4 },
-    { name: 'DANCE 🕺🏾', id: 'dance-button', level: 1},
+    { name: 'DANCE 🕺🏾', id: 'dance-button', level: 1 },
     { name: 'SING 🎤 AND DANCE 🕺🏾', id: 'sing-dance-button', level: 3 },
     { name: 'NEW ALBUM 💽', id: 'new-album-button', level: 4 }
 )
 
 michaelJackson.attacks.push( 
-    { name: 'SING 🎤', id: 'sing-button' , level: 5},
-    { name: 'COMPOSE 💡🗓', id: 'compose-button', level: 5 },
-    { name: 'DANCE 🕺🏾', id: 'dance-button', level: 5},
+    { name: 'SING 🎤', id: 'sing-button', level: 5 },
+    { name: 'COMPOSE 💡🗓', id: 'compose-button', level: 4 },
+    { name: 'DANCE 🕺🏾', id: 'dance-button', level: 5 },
     { name: 'SING 🎤 AND DANCE 🕺🏾', id: 'sing-dance-button', level: 5 },
-    { name: 'CONCERT 📆🔊', id: 'concert-button', level: 5 }
+    { name: 'CONCERT 📆🔊', id: 'concert-button', level: 4 }
 )
 
 brunoMars.attacks.push( 
@@ -103,9 +104,6 @@ function startGame() {
     enemyLivesParagraph.innerHTML = enemyLives;
 
     singerPlayerButton.addEventListener('click', selectSingerPlayer);
-    singButton.addEventListener('click', singAttack);
-    singDanceButton.addEventListener('click', singDanceAttack);
-    danceButton.addEventListener('click', danceAttack);
     resetButton.addEventListener('click', resetGame);
 }
 
@@ -122,9 +120,9 @@ function selectSingerPlayer(){
         selectSingerEnemy();
         singerPlayerNameParagraph.innerHTML = selectedPlayerSinger.fullName;
         singerEnemyNameParagraph.innerHTML = selectedEnemySinger.fullName;
+        createButtonsAttacks(selectedPlayerSinger);
         attackChoiceSection.style.display = 'flex';
         singerChoiceSection.style.display = 'none';
-        disableButtonsAttack(false);
     }
     else {
         alert('You must select a singer');
@@ -132,54 +130,16 @@ function selectSingerPlayer(){
 }
 
 function selectSingerEnemy(){
-    let selectedSingerEnemyRamdom = ramdom(1,3);
-    switch(selectedSingerEnemyRamdom){
-        case 1:{
-            selectedEnemySinger = theWeeknd;
-            return;
-        }
-        case 2:{
-            selectedEnemySinger = michaelJackson;
-            return;
-        }
-        case 3:{
-            selectedEnemySinger = brunoMars;
-            return;
-        }
-    }
-}
-
-function singAttack(){
-    playerAttack = "SING";
-    selectEnemyAttack();
-}
-
-function singDanceAttack(){
-    playerAttack = "SING-DANCE";
-    selectEnemyAttack();
-}
-
-function danceAttack(){
-    playerAttack = "DANCE";
-    selectEnemyAttack();
+    selectedEnemySinger = singers[ramdom(0,singers.length - 1)];
 }
 
 function selectEnemyAttack(){
-    let attack = ramdom(1,3)
-    switch(attack){
-        case 1:{
-            enemyAttack = "SING";
-            break;
-        }
-        case 2:{
-            enemyAttack = "SING-DANCE";
-            break;
-        }
-        case 3:{
-            enemyAttack = "DANCE";
-            break;
-        }
-    }
+    selectedEnemySinger.attacks.length
+    let attack = ramdom(0,selectedEnemySinger.attacks.length - 1);
+    enemyAttack = selectedEnemySinger.attacks[attack];
+    enemyAttacks.push(enemyAttack);
+    console.log(enemyAttacks)
+
     let result = figth();
     createMessage(result);
     checkLives();
@@ -189,15 +149,15 @@ function createMessage(result){
 
     let newEnemyAttack = document.createElement('p');
     let newPlayerAttack = document.createElement('p');
-    newEnemyAttack.innerHTML = enemyAttack;
-    newPlayerAttack.innerHTML = playerAttack;
+    newEnemyAttack.innerHTML = `${enemyAttack.name}: level ${enemyAttack.level}`;
+    newPlayerAttack.innerHTML = `${playerAttack.name}: level ${playerAttack.level}`;
 
     enemyAttackDivision.appendChild(newEnemyAttack);
     playerAttackDivision.appendChild(newPlayerAttack);
     resultParagraph.innerHTML = result;
 }
 
-function createFinishMessage(finalResult){
+function createFinishMessage(finalResult) {
     resultParagraph.innerHTML = finalResult;
 }
 
@@ -206,22 +166,11 @@ function ramdom(min, max){
 }
 
 function figth(){
-    if (enemyAttack == playerAttack) {
+    if (playerAttack.level == enemyAttack.level) {
         return "You are tie";
     }
-    if (playerAttack == "SING" && enemyAttack == "DANCE") {
+    if (playerAttack.level > enemyAttack.level) {
         enemyLives --;
-        enemyLivesParagraph.innerHTML = enemyLives;
-        return "You Win!! 🎉";
-    }
-    if (playerAttack == "SING-DANCE" && enemyAttack == "SING") {
-        enemyLives --;
-        enemyLivesParagraph.innerHTML = enemyLives;
-        return "You Win!! 🎉";
-    } 
-    if (playerAttack == "SING-DANCE" && enemyAttack == "DANCE") {
-        enemyLives --;
-        enemyLivesParagraph.innerHTML = enemyLives;
         return "You Win!! 🎉";
     }
     playerLives --;
@@ -241,10 +190,35 @@ function checkLives(){
     }
 }
 
+function createButtonsAttacks(selectedSinger) {
+    selectedSinger.attacks.forEach(attack => {
+        attackData = `
+        <button id="${attack.id}" class="attack-button" disabled>${attack.name}</button>
+        `
+        attacksDivision.innerHTML += attackData;
+        currentAttackButtons.push(attack.id);
+    });
+    createEventListener();
+    disableButtonsAttack(false);
+}
+
 function disableButtonsAttack(isDisabled){
-    singButton.disabled = isDisabled;
-    danceButton.disabled = isDisabled;
-    singDanceButton.disabled = isDisabled;
+    currentAttackButtons.forEach(button => {
+        document.getElementById(button).disabled = isDisabled
+    });
+}
+
+function createEventListener() {
+    currentAttackButtons.forEach((button) => {
+        let buttonElement = document.getElementById(button);
+        buttonElement.addEventListener('click', (e) => {
+            playerAttack = selectedPlayerSinger.attacks.find(attack => attack.id === e.target.id);
+            playerAttacks.push(playerAttack);
+            console.log(playerAttacks);
+            selectEnemyAttack();
+            buttonElement.style.background = '#E6E2C3'
+        })
+    });
 }
 
 function resetGame(){
