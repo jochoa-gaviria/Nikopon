@@ -19,8 +19,8 @@ const resetButton = document.getElementById('reset-game-button');
 const singerPlayerButton = document.getElementById('select-singer-button');
 
 ///Paragraphs
-const playerLivesParagraph = document.getElementById('player-lives');
-const enemyLivesParagraph = document.getElementById('enemy-lives');
+const playerWinsParagraph = document.getElementById('player-wins');
+const enemyWinsParagraph = document.getElementById('enemy-wins');
 const resultParagraph = document.getElementById('result');
 const singerPlayerNameParagraph = document.getElementById('singer-player-name');
 const singerEnemyNameParagraph = document.getElementById('singer-enemy-name');
@@ -39,13 +39,11 @@ let brunoMarsRadio;
 //Functionals
 let singers = [];
 let currentAttackButtons = [];
-let playerAttack;
 let playerAttacks = [];
-let enemyAttack;
 let enemyAttacks = [];
 let singerOptions;
-let playerLives = 3;
-let enemyLives = 3;
+let playerWins = 0;
+let enemyWins = 0;
 var selectedPlayerSinger;
 var selectedEnemySinger;
 
@@ -54,7 +52,7 @@ let theWeeknd = new Singer('theWeeknd', 'The Weeknd', './assets/the-weeknd.png',
 let michaelJackson = new Singer('michaelJackson', 'Michael Jackson', './assets/michael-jackson.png', 3);
 let brunoMars = new Singer('brunoMars', 'Bruno Mars', './assets/bruno-mars.png', 3);
 
-theWeeknd.attacks.push( 
+theWeeknd.attacks.push(
     { name: 'SING 🎤', id: 'sing-button', level: 5 },
     { name: 'COMPOSE 💡🗓', id: 'compose-button', level: 4 },
     { name: 'DANCE 🕺🏾', id: 'dance-button', level: 1 },
@@ -62,7 +60,7 @@ theWeeknd.attacks.push(
     { name: 'NEW ALBUM 💽', id: 'new-album-button', level: 4 }
 )
 
-michaelJackson.attacks.push( 
+michaelJackson.attacks.push(
     { name: 'SING 🎤', id: 'sing-button', level: 5 },
     { name: 'COMPOSE 💡🗓', id: 'compose-button', level: 4 },
     { name: 'DANCE 🕺🏾', id: 'dance-button', level: 5 },
@@ -70,7 +68,7 @@ michaelJackson.attacks.push(
     { name: 'CONCERT 📆🔊', id: 'concert-button', level: 4 }
 )
 
-brunoMars.attacks.push( 
+brunoMars.attacks.push(
     { name: 'SING 🎤', id: 'sing-button', level: 4 },
     { name: 'NEW ALBUM 💽', id: 'new-album-button', level: 3 },
     { name: 'DANCE 🕺🏾', id: 'dance-button', level: 5},
@@ -100,8 +98,8 @@ function startGame() {
     michaelJacksonRadio = document.getElementById('michaelJackson');
     brunoMarsRadio = document.getElementById('brunoMars');
 
-    playerLivesParagraph.innerHTML = playerLives;
-    enemyLivesParagraph.innerHTML = enemyLives;
+    playerWinsParagraph.innerHTML = playerWins;
+    enemyWinsParagraph.innerHTML = enemyWins;
 
     singerPlayerButton.addEventListener('click', selectSingerPlayer);
     resetButton.addEventListener('click', resetGame);
@@ -138,14 +136,13 @@ function selectEnemyAttack(){
     let attack = ramdom(0,selectedEnemySinger.attacks.length - 1);
     enemyAttack = selectedEnemySinger.attacks[attack];
     enemyAttacks.push(enemyAttack);
-    console.log(enemyAttacks)
 
-    let result = figth();
-    createMessage(result);
-    checkLives();
+    if (playerAttacks.length === 4){
+        figth();
+    }
 }
 
-function createMessage(result){
+function createMessage(result, enemyAttack, playerAttack){
 
     let newEnemyAttack = document.createElement('p');
     let newPlayerAttack = document.createElement('p');
@@ -166,28 +163,38 @@ function ramdom(min, max){
 }
 
 function figth(){
-    if (playerAttack.level == enemyAttack.level) {
-        return "You are tie";
+
+    for (let i = 0; i <= playerAttacks.length - 1; i++){
+        if (playerAttacks[i].level == enemyAttacks[i].level) {
+            result = "You are tie";
+        }
+        else if (playerAttacks[i].level > enemyAttacks[i].level) {
+            playerWins ++;
+            playerWinsParagraph.innerHTML = `Wins: ${playerWins}`;
+            result = "You Win!! 🎉";
+        }
+        else {
+            enemyWins ++;
+            enemyWinsParagraph.innerHTML = `Wins: ${enemyWins}`;
+            result = "You Loose!! 💀";
+        }
+        console.log(result);
+        createMessage(result, enemyAttacks[i], playerAttacks[i]);
     }
-    if (playerAttack.level > enemyAttack.level) {
-        enemyLives --;
-        return "You Win!! 🎉";
-    }
-    playerLives --;
-    playerLivesParagraph.innerHTML = playerLives;
-    return "You Loose!! 💀";
+    checkWinner();
 }
 
-function checkLives(){
-    if (enemyLives == 0){
-        createFinishMessage("🎉Congratulations!! you've won!!🎉");
-        disableButtonsAttack(true);
-        resetGameSection.style.display = 'block';
-    } else if (playerLives == 0){
-        createFinishMessage("💀Bad news!! you've lost!!💀");
-        disableButtonsAttack(true);
-        resetGameSection.style.display = 'block';
+function checkWinner(){
+    if (playerWins > enemyWins){
+        createFinishMessage("🎉Congratulations!! you're the Winner'!!🎉");
+    } else if (playerWins < enemyWins){
+        createFinishMessage("💀Bad news!! you're the Loseer!!💀");
     }
+    else {
+        createFinishMessage("😐Try again, it's a tie. Nobody wins.😐");
+    }
+    disableButtonsAttack(true);
+    resetGameSection.style.display = 'block';
 }
 
 function createButtonsAttacks(selectedSinger) {
@@ -208,15 +215,16 @@ function disableButtonsAttack(isDisabled){
     });
 }
 
+
 function createEventListener() {
     currentAttackButtons.forEach((button) => {
         let buttonElement = document.getElementById(button);
         buttonElement.addEventListener('click', (e) => {
             playerAttack = selectedPlayerSinger.attacks.find(attack => attack.id === e.target.id);
             playerAttacks.push(playerAttack);
-            console.log(playerAttacks);
             selectEnemyAttack();
             buttonElement.style.background = '#E6E2C3'
+            buttonElement.disabled = true
         })
     });
 }
