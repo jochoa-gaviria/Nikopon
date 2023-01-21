@@ -5,7 +5,15 @@ class Singer {
         this.fullName = fullName
         this.pathPhoto = pathPhoto;
         this.lives = lives;
-        this.attacks = []
+        this.attacks = [];
+        this.xPosition = 20;
+        this.xSpeed = 0;
+        this.yPosition = 0;
+        this.ySpeed = 0;
+        this.width = 70;
+        this.height = 140;
+        this.image = new Image();
+        this.image.src = pathPhoto;
     }
 }
 
@@ -13,6 +21,10 @@ class Singer {
 const attackChoiceSection = document.getElementById('attack-choice-section');
 const singerChoiceSection = document.getElementById('singer-choice-section');
 const resetGameSection = document.getElementById('reset-game-section');
+const seeMapSection = document.getElementById('see-map');
+
+//Canva
+const map = document.getElementById('map')
 
 //Buttons
 const resetButton = document.getElementById('reset-game-button');
@@ -46,6 +58,8 @@ let playerWins = 0;
 let enemyWins = 0;
 var selectedPlayerSinger;
 var selectedEnemySinger;
+let canva = map.getContext('2d');
+let interval;
 
 //Singers Objects
 let theWeeknd = new Singer('theWeeknd', 'The Weeknd', './assets/the-weeknd.png', 3);
@@ -82,6 +96,7 @@ singers.push(theWeeknd, michaelJackson, brunoMars);
 function startGame() {
     attackChoiceSection.style.display = 'none';
     resetGameSection.style.display = 'none';
+    seeMapSection.style.display = 'none';
 
     singers.forEach(singer => {
         singerOptions = `
@@ -119,8 +134,10 @@ function selectSingerPlayer(){
         singerPlayerNameParagraph.innerHTML = selectedPlayerSinger.fullName;
         singerEnemyNameParagraph.innerHTML = selectedEnemySinger.fullName;
         createButtonsAttacks(selectedPlayerSinger);
-        attackChoiceSection.style.display = 'flex';
         singerChoiceSection.style.display = 'none';
+        // attackChoiceSection.style.display = 'flex';
+        seeMapSection.style.display = 'flex'; 
+        interval = setInterval(drawImageOnCanva, 100);
     }
     else {
         alert('You must select a singer');
@@ -215,7 +232,6 @@ function disableButtonsAttack(isDisabled){
     });
 }
 
-
 function createEventListener() {
     currentAttackButtons.forEach((button) => {
         let buttonElement = document.getElementById(button);
@@ -231,6 +247,36 @@ function createEventListener() {
 
 function resetGame(){
     location.reload();
+}
+
+function drawImageOnCanva() {
+    canva.clearRect(0,0, map.width, map.height);
+    selectedPlayerSinger.xPosition += selectedPlayerSinger.xSpeed; 
+    selectedPlayerSinger.yPosition += selectedPlayerSinger.ySpeed;
+    canva.drawImage(selectedPlayerSinger.image, selectedPlayerSinger.xPosition,
+                     selectedPlayerSinger.yPosition, selectedPlayerSinger.width, selectedPlayerSinger.height);
+}
+
+function moveSingerUp() {
+    selectedPlayerSinger.ySpeed = -5;
+    drawImageOnCanva();
+}
+
+function moveSingerLeft() {
+    selectedPlayerSinger.xSpeed = -5;
+}
+
+function moveSingerDown() {
+    selectedPlayerSinger.ySpeed = 5
+}
+
+function moveSingerRigth() {
+    selectedPlayerSinger.xSpeed = 5;
+}
+
+function stopSingerMove() {
+    selectedPlayerSinger.xSpeed = 0;
+    selectedPlayerSinger.ySpeed = 0;
 }
 
 window.addEventListener('load', startGame);
