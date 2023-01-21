@@ -137,7 +137,7 @@ function selectSingerPlayer(){
         singerChoiceSection.style.display = 'none';
         // attackChoiceSection.style.display = 'flex';
         seeMapSection.style.display = 'flex'; 
-        interval = setInterval(drawImageOnCanva, 100);
+        starCanva();
     }
     else {
         alert('You must select a singer');
@@ -249,6 +249,12 @@ function resetGame(){
     location.reload();
 }
 
+function  starCanva(){
+    interval = setInterval(drawImageOnCanva, 100);
+    window.addEventListener('keydown', moveSinger);
+    window.addEventListener('keyup', stopSingerMove);
+} 
+
 function drawImageOnCanva() {
     canva.clearRect(0,0, map.width, map.height);
     selectedPlayerSinger.xPosition += selectedPlayerSinger.xSpeed; 
@@ -256,6 +262,25 @@ function drawImageOnCanva() {
     canva.drawImage(selectedPlayerSinger.image, selectedPlayerSinger.xPosition,
                      selectedPlayerSinger.yPosition, selectedPlayerSinger.width, selectedPlayerSinger.height);
 }
+
+
+function moveSinger(event) {
+    switch(event.key) {
+        case 'ArrowUp':
+            moveSingerUp()
+            break;
+        case 'ArrowDown':
+            moveSingerDown()
+            break;
+        case 'ArrowLeft':
+            moveSingerLeft()
+            break;
+        case 'ArrowRight':
+            moveSingerRigth()
+            break;
+    }
+}
+
 
 function moveSingerUp() {
     selectedPlayerSinger.ySpeed = -5;
