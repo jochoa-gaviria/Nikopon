@@ -141,6 +141,24 @@ input:checked + label {
     height: 400px;
 }
 
+.move-buttons {
+    display: none;
+    flex-direction: row;
+}
+
+.move-buttons button {
+    display: flex;
+    flex-direction: row;
+    background-color: #227C70;
+    border: 2px solid #E6E2C3;
+    padding: 15px;
+    margin: 8px;
+    border-radius: 30px;
+    box-sizing: border-box;
+    font-family: 'Audiowide', cursive;
+    font-size: 15px;
+}
+
 @media (max-width: 500px) {
     .cards, .attacks {
         flex-direction: column;

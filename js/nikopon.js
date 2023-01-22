@@ -1,19 +1,24 @@
 //Classes
 class Singer {
-    constructor(name, fullName, pathPhoto, lives) {
+    constructor(name, fullName, pathPhoto, lives, xPosition=300, yPosition=180) {
         this.name = name;
         this.fullName = fullName
         this.pathPhoto = pathPhoto;
         this.lives = lives;
         this.attacks = [];
-        this.xPosition = 20;
+        this.xPosition = xPosition;
         this.xSpeed = 0;
-        this.yPosition = 0;
+        this.yPosition = yPosition;
         this.ySpeed = 0;
-        this.width = 70;
-        this.height = 140;
+        this.width = 120;
+        this.height = 240;
         this.image = new Image();
         this.image.src = pathPhoto;
+    }
+
+    showSinger() {
+        canva.drawImage(this.image, this.xPosition,
+            this.yPosition, this.width, this.height);   
     }
 }
 
@@ -60,6 +65,10 @@ var selectedPlayerSinger;
 var selectedEnemySinger;
 let canva = map.getContext('2d');
 let interval;
+let backgroundMap = new Image();
+backgroundMap.src = './assets/concert-scene.png';
+let canvaWitdh = window.innerWidth - 20;
+let canvaHeigt = canvaWitdh * (600/1200);
 
 //Singers Objects
 let theWeeknd = new Singer('theWeeknd', 'The Weeknd', './assets/the-weeknd.png', 3);
@@ -135,9 +144,8 @@ function selectSingerPlayer(){
         singerEnemyNameParagraph.innerHTML = selectedEnemySinger.fullName;
         createButtonsAttacks(selectedPlayerSinger);
         singerChoiceSection.style.display = 'none';
-        // attackChoiceSection.style.display = 'flex';
         seeMapSection.style.display = 'flex'; 
-        starCanva();
+        startCanva();
     }
     else {
         alert('You must select a singer');
@@ -145,7 +153,9 @@ function selectSingerPlayer(){
 }
 
 function selectSingerEnemy(){
-    selectedEnemySinger = singers[ramdom(0,singers.length - 1)];
+    let newSingers = singers.filter(function(singer) {return singer.name !== selectedPlayerSinger.name})
+    selectedEnemySinger = newSingers[ramdom(0,newSingers.length - 1)];
+    selectedEnemySinger.xPosition = 800;
 }
 
 function selectEnemyAttack(){
@@ -195,7 +205,6 @@ function figth(){
             enemyWinsParagraph.innerHTML = `Wins: ${enemyWins}`;
             result = "You Loose!! 💀";
         }
-        console.log(result);
         createMessage(result, enemyAttacks[i], playerAttacks[i]);
     }
     checkWinner();
@@ -208,10 +217,33 @@ function checkWinner(){
         createFinishMessage("💀Bad news!! you're the Loseer!!💀");
     }
     else {
-        createFinishMessage("😐Try again, it's a tie. Nobody wins.😐");
+        createFinishMessage("😐It's a tie. Nobody wins.😐");
     }
     disableButtonsAttack(true);
     resetGameSection.style.display = 'block';
+}
+
+function checkCrash() {
+    const upEnemySinger = selectedEnemySinger.yPosition;
+    const downEnemySinger = selectedEnemySinger.yPosition + selectedEnemySinger.height;
+    const leftEnemySinger = selectedEnemySinger.xPosition;
+    const rigthEnemySinger = selectedEnemySinger.xPosition + selectedEnemySinger.width;
+
+    const upPlayerSinger = selectedPlayerSinger.yPosition;
+    const downPlayerSinger = selectedPlayerSinger.yPosition + selectedPlayerSinger.height;
+    const leftPlayerSinger = selectedPlayerSinger.xPosition;
+    const rigthPlayerSinger = selectedPlayerSinger.xPosition + selectedPlayerSinger.width;
+
+    if (downPlayerSinger < upEnemySinger || 
+        upPlayerSinger > downEnemySinger ||
+        rigthPlayerSinger < leftEnemySinger ||
+        leftPlayerSinger > rigthEnemySinger){
+            return false;
+        }
+    stopSingerMove();
+    clearInterval(interval);
+    seeMapSection.style.display = 'none'; 
+    attackChoiceSection.style.display = 'flex';
 }
 
 function createButtonsAttacks(selectedSinger) {
@@ -249,7 +281,9 @@ function resetGame(){
     location.reload();
 }
 
-function  starCanva(){
+function  startCanva(){
+    map.width = canvaWitdh;
+    map.height = canvaHeigt;
     interval = setInterval(drawImageOnCanva, 100);
     window.addEventListener('keydown', moveSinger);
     window.addEventListener('keyup', stopSingerMove);
@@ -257,10 +291,14 @@ function  starCanva(){
 
 function drawImageOnCanva() {
     canva.clearRect(0,0, map.width, map.height);
+    canva.drawImage(backgroundMap, 0, 0, map.width, map.height);
     selectedPlayerSinger.xPosition += selectedPlayerSinger.xSpeed; 
     selectedPlayerSinger.yPosition += selectedPlayerSinger.ySpeed;
-    canva.drawImage(selectedPlayerSinger.image, selectedPlayerSinger.xPosition,
-                     selectedPlayerSinger.yPosition, selectedPlayerSinger.width, selectedPlayerSinger.height);
+    selectedPlayerSinger.showSinger();
+    selectedEnemySinger.showSinger();
+    if (selectedPlayerSinger.xSpeed !== 0 || selectedPlayerSinger.ySpeed !== 0){
+        checkCrash();
+    }
 }
 
 
@@ -283,20 +321,20 @@ function moveSinger(event) {
 
 
 function moveSingerUp() {
-    selectedPlayerSinger.ySpeed = -5;
+    selectedPlayerSinger.ySpeed = -6;
     drawImageOnCanva();
 }
 
 function moveSingerLeft() {
-    selectedPlayerSinger.xSpeed = -5;
+    selectedPlayerSinger.xSpeed = -6;
 }
 
 function moveSingerDown() {
-    selectedPlayerSinger.ySpeed = 5
+    selectedPlayerSinger.ySpeed = 6;
 }
 
 function moveSingerRigth() {
-    selectedPlayerSinger.xSpeed = 5;
+    selectedPlayerSinger.xSpeed = 6;
 }
 
 function stopSingerMove() {
