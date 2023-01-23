@@ -127,6 +127,18 @@ function startGame() {
 
     singerPlayerButton.addEventListener('click', selectSingerPlayer);
     resetButton.addEventListener('click', resetGame);
+    getIntoGame();
+}
+
+
+function getIntoGame() {
+    fetch("http://localhost:8000/getIn").then(function(res) {
+        if (res.ok) {
+            res.text().then(function (respuesta) {
+                console.log(respuesta);
+            })
+        }
+    })
 }
 
 function selectSingerPlayer(){
