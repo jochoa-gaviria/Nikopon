@@ -69,6 +69,7 @@ let backgroundMap = new Image();
 backgroundMap.src = './assets/concert-scene.png';
 let canvaWitdh = window.innerWidth - 20;
 let canvaHeigt = canvaWitdh * (600/1200);
+let playerId;
 
 //Singers Objects
 let theWeeknd = new Singer('theWeeknd', 'The Weeknd', './assets/the-weeknd.png', 3);
@@ -135,7 +136,7 @@ function getIntoGame() {
     fetch("http://localhost:8000/getIn").then(function(res) {
         if (res.ok) {
             res.text().then(function (respuesta) {
-                console.log(respuesta);
+                playerId = respuesta;
             })
         }
     })
@@ -162,7 +163,22 @@ function selectSingerPlayer(){
     else {
         alert('You must select a singer');
     }
+
+    selectSingerDoRequest(selectedPlayerSinger.name);
 }
+
+function selectSingerDoRequest(singerName){
+    fetch(`http://localhost:8000/singer/${playerId}`, {
+        method: "post",
+        headers:  {
+            "content-type": "application/json"
+        },
+        body: JSON.stringify({
+            singer: singerName
+        })
+    })
+}
+
 
 function selectSingerEnemy(){
     let newSingers = singers.filter(function(singer) {return singer.name !== selectedPlayerSinger.name})
@@ -308,9 +324,30 @@ function drawImageOnCanva() {
     selectedPlayerSinger.yPosition += selectedPlayerSinger.ySpeed;
     selectedPlayerSinger.showSinger();
     selectedEnemySinger.showSinger();
+
+    sendLocation(selectedPlayerSinger.xPosition, selectedPlayerSinger.yPosition);
     if (selectedPlayerSinger.xSpeed !== 0 || selectedPlayerSinger.ySpeed !== 0){
         checkCrash();
     }
+}
+
+function sendLocation(x, y){
+    fetch(`http://localhost:8000/singer/${playerId}/location`, {
+        method: "post",
+        headers:  {
+            "content-type": "application/json"
+        },
+        body: JSON.stringify({
+            x: x,
+            y: y
+        })
+    }).then(function (res) {
+        if (res.ok){
+            res.json().then(function ({enemies}) {
+                console.log(enemies)
+            })
+        }
+    })
 }
 
 
